@@ -6,14 +6,22 @@ import { notFound } from "next/navigation";
 
 export async function generateStaticParams() {
   const response = await fetch(carsURL);
+  if (!response.ok) {
+    console.error(
+      "Failed to fetch data:",
+      response.status,
+      response.statusText
+    );
+    return [];
+  }
   const data: VehiclesResponse = await response.json();
 
-  return data.Results.flatMap((make) => {
-    return years.map((year) => ({
+  return data.Results.flatMap((make) =>
+    years.map((year) => ({
       makeId: make.MakeId.toString(),
       year: year.toString(),
-    }));
-  });
+    }))
+  );
 }
 
 export default async function ResultPage({
